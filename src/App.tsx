@@ -1,48 +1,42 @@
-import React from "react";
+import { useState } from "react";
 import "./App.scss";
 import Home from "./components/Home";
 import Login from "./components/Login";
 import { UserData } from "./mock/User.data";
 
-interface AppState {
-  alertMessage: string;
-  showAlert: boolean;
-  isLogin: boolean;
-  user: UserData;
-}
+const App = () => {
+  const [alertMessage, setAlertMessage] = useState("");
+  const [showAlert, setShowAlert] = useState(false);
+  const [isLogin, setIsLogin] = useState(false);
+  const [user, setUser] = useState({ email: "", password: "", name: "" });
 
-export default class App extends React.Component<{}, AppState> {
-  state = {
-    alertMessage: "",
-    showAlert: false,
-    isLogin: false,
-    user: { email: "", password: "", name: "" },
+  const setLogin = (status: boolean, user: UserData) => {
+    setIsLogin(status);
+    setUser(user);
   };
 
-  setLogin = (status: boolean, user: UserData) => {
-    this.setState({ isLogin: status, user });
-  };
-
-  setAlert = (status: boolean, alertMessage: string) => {
-    this.setState({ showAlert: status, alertMessage });
+  const setAlert = (status: boolean, alertMessage: string) => {
+    setAlertMessage(alertMessage);
+    setShowAlert(status);
 
     setTimeout(() => {
-      this.setState({ showAlert: false, alertMessage: "" });
+      setAlertMessage("");
+      setShowAlert(false);
     }, 2000);
   };
 
-  render() {
-    return (
-      <div className="app container">
-        {this.state.showAlert ? (
-          <div className="alert alert-danger" role="alert">
-            {this.state.alertMessage}
-          </div>
-        ) : (
-          <div></div>
-        )}
-        {this.state.isLogin ? <Home user={this.state.user}></Home> : <Login setLogin={this.setLogin} setAlert={this.setAlert}></Login>}
-      </div>
-    );
-  }
-}
+  return (
+    <div className="app container">
+      {showAlert ? (
+        <div className="alert alert-danger" role="alert">
+          {alertMessage}
+        </div>
+      ) : (
+        <div></div>
+      )}
+      {isLogin ? <Home user={user}></Home> : <Login setLogin={setLogin} setAlert={setAlert}></Login>}
+    </div>
+  );
+};
+
+export default App;
